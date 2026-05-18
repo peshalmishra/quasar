@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: quasar-frontend-deployment
+  namespace: quasar
+  labels:
+    app: quasar-frontend
+    tier: frontend
+spec:
+  replicas: 2
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  selector:
+    matchLabels:
+      app: quasar-frontend
+  template:
+    metadata:
+      labels:
+        app: quasar-frontend
+        tier: frontend
+    spec:
+      containers:
+        - name: quasar-frontend
+          image: peshal21/quasar-frontend:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 4173
+              name: http
+          env:
+            - name: VITE_API_BASE_URL
+              value: "http://quasar-backend-service:4000"
+            - name: NODE_ENV
+              value: "production"
+            - name: PORT
+              value: "4173"
+          readinessProbe:
+            tcpSocket:
+              port: 4173
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+          livenessProbe:
+            tcpSocket:
+              port: 4173
+            initialDelaySeconds: 30
+            periodSeconds: 20
+            timeoutSeconds: 5
+            failureThreshold: 3
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "250m"
+              memory: "256Mi"

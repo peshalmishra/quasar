@@ -1,0 +1,63 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: quasar-backend-deployment
+  namespace: quasar
+  labels:
+    app: quasar-backend
+    tier: backend
+spec:
+  replicas: 2
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  selector:
+    matchLabels:
+      app: quasar-backend
+  template:
+    metadata:
+      labels:
+        app: quasar-backend
+        tier: backend
+    spec:
+      containers:
+        - name: quasar-backend
+          image: peshal21/quasar-backend:v2
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 4000
+              name: http
+          env:
+            - name: MONGO_URI
+              valueFrom:
+                secretKeyRef:
+                  name: quasar-backend-secret
+                  key: MONGO_URI
+          envFrom:
+            - configMapRef:
+                name: quasar-backend-config
+            - secretRef:
+                name: quasar-backend-secret
+          readinessProbe:
+            tcpSocket:
+              port: 4000
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+          livenessProbe:
+            tcpSocket:
+              port: 4000
+            initialDelaySeconds: 30
+            periodSeconds: 20
+            timeoutSeconds: 5
+            failureThreshold: 3
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "300m"
+              memory: "384Mi"

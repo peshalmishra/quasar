@@ -1,0 +1,14 @@
+# Ignore local dependencies (Docker will install its own inside the container)
+node_modules/
+npm-debug.log
+
+# Ignore local environment secrets (Render and K8s will inject these dynamically)
+.env
+*.env
+
+# Ignore git and IDE configurations
+.git
+.gitignore
+.vscode/
+.idea/
+README.md

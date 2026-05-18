@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: quasar-backend-service
+  namespace: quasar
+  labels:
+    app: quasar-backend
+    tier: backend
+spec:
+  type: ClusterIP
+  selector:
+    app: quasar-backend
+  ports:
+    - port: 4000
+      targetPort: 4000
+      protocol: TCP
+      name: http
