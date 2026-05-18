@@ -11,6 +11,7 @@ const app = express();
 
 const corsOptions = {
     origin: [
+        'https://quasar-frontend-eight.vercel.app', // Production Vercel frontend
         'http://localhost:4173', // Docker served frontend (serve)
         'http://localhost:5173', // Vite dev server
         'http://localhost:3000', // fallback
