@@ -28,7 +28,7 @@ const labelStyle = {
 
 export default function Register({ handleShow }) {
   const [showPassword, setShowPassword] = useState(false);
-  const [input, setInput] = useState({ name: '', email: '', password: '' });
+  const [input, setInput] = useState({ name: '', email: '', password: '', role: 'member' });
   const [errors, setErrors] = useState({ name: '', email: '', password: '', all: '' });
   const [focused, setFocused] = useState('');
   const [showX, setShowX] = useState(false);
@@ -77,7 +77,7 @@ export default function Register({ handleShow }) {
         headers: { 'Content-Type': 'application/json' },
         withCredentials: true,
       });
-      setInput({ name: '', email: '', password: '' });
+      setInput({ name: '', email: '', password: '', role: 'member' });
       navigate('/login');
     } catch (error) {
       if (error.response?.status === 409)
@@ -245,6 +245,45 @@ export default function Register({ handleShow }) {
                   {errors.password}
                 </p>
               )}
+            </motion.div>
+
+            {/* Role selector */}
+            <motion.div
+              initial={{ opacity: 0, x: -10 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.18, duration: 0.3 }}
+            >
+              <label style={labelStyle}>Account Role</label>
+              <div style={{ display: 'flex', gap: 10 }}>
+                {[
+                  { value: 'member', label: '👤 Team Member', desc: 'Can view & update tasks' },
+                  { value: 'admin',  label: '🛡️ Admin',       desc: 'Can create & delete projects' },
+                ].map(opt => (
+                  <button
+                    key={opt.value}
+                    type="button"
+                    onClick={() => setInput(p => ({ ...p, role: opt.value }))}
+                    style={{
+                      flex: 1, padding: '10px 8px', borderRadius: 10, cursor: 'pointer',
+                      border: input.role === opt.value
+                        ? '1.5px solid rgba(124,58,237,0.6)'
+                        : '1px solid rgba(255,255,255,0.1)',
+                      background: input.role === opt.value
+                        ? 'rgba(124,58,237,0.14)'
+                        : 'rgba(255,255,255,0.04)',
+                      transition: 'all 0.15s',
+                      textAlign: 'center',
+                    }}
+                  >
+                    <div style={{ fontSize: 13, fontWeight: 700, color: input.role === opt.value ? '#a78bfa' : '#a1a1aa', fontFamily: "'Manrope', sans-serif", marginBottom: 2 }}>
+                      {opt.label}
+                    </div>
+                    <div style={{ fontSize: 10, color: '#52525b', fontFamily: "'Manrope', sans-serif" }}>
+                      {opt.desc}
+                    </div>
+                  </button>
+                ))}
+              </div>
             </motion.div>
 
             <motion.button

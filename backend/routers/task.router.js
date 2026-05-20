@@ -1,15 +1,27 @@
-// import { Router } from "express";
 import express from 'express';
-import {addTask, deleteTask, editTask, showone, showTask} from'../controllers/task.controllers.js';
+import {
+    addTask,
+    deleteTask,
+    editTask,
+    showone,
+    showTask,
+    updateTaskStatus,
+    uploadAttachment,
+    deleteAttachment,
+    getTasksByProject,
+} from '../controllers/task.controllers.js';
 import { authenticationToken } from '../Middleware/auth.js';
-const router = express.Router({mergeParams:true});
 
-router.route('/addtask').post(authenticationToken,addTask);
-router.route('/edittask/:id').put(authenticationToken,editTask);
-router.route('/deleteTask/:id').delete(authenticationToken,deleteTask);
-router.route('/showTask/:id').get(authenticationToken,showTask);
-router.route('/showOne/:id/:projectId').get(authenticationToken,showone);
-// router.get('/',(req,res)=>{
-//     res.send('Task');
-// })
+const router = express.Router({ mergeParams: true });
+
+router.post('/addtask', authenticationToken, addTask);
+router.put('/edittask/:id', authenticationToken, editTask);
+router.patch('/status/:id', authenticationToken, updateTaskStatus);
+router.delete('/deleteTask/:id', authenticationToken, deleteTask);
+router.get('/showTask/:id', authenticationToken, showTask);
+router.get('/showOne/:id/:projectId', authenticationToken, showone);
+router.get('/byProject/:projectId', authenticationToken, getTasksByProject);
+router.post('/upload/:id', authenticationToken, uploadAttachment);
+router.delete('/:id/attachment/:attachmentId', authenticationToken, deleteAttachment);
+
 export default router;

@@ -16,8 +16,12 @@ const userSchema = new Schema({
         type: String,
         required: true,
     },
-
-})
+    role: {
+        type: String,
+        enum: ['admin', 'member'],
+        default: 'member',
+    },
+},{timestamps: true})
 
 userSchema.pre("findOneAndDelete", async function(next){
     const userId = this.getQuery()._id;

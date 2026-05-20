@@ -75,7 +75,8 @@ export default function Login({ handleShow }) {
       localStorage.setItem('token', token);
       localStorage.setItem('userId', id);
       localStorage.setItem('projectId', projectId);
-      localStorage.setItem('user', JSON.stringify({ id, name: user.name, email: user.email }));
+      localStorage.setItem('role', user.role || 'member');
+      localStorage.setItem('user', JSON.stringify({ id, name: user.name, email: user.email, role: user.role }));
       setInput({ email: '', password: '' });
 
       if (projectId) navigate(`/showtask/${id}/${projectId}`);
