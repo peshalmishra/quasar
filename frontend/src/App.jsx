@@ -1,4 +1,5 @@
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import { ThemeProvider } from './ThemeContext.jsx';
 import Login from './components/Login';
 import Register from './components/Register';
 import First from './components/First';

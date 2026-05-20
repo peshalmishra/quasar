@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useTheme } from '../ThemeContext.jsx';
 import { FilePlus2, Trash2, Search, FolderOpen, ChevronRight } from 'lucide-react';
 import axios from 'axios';
 import { Link, useParams, useNavigate } from 'react-router-dom';
@@ -32,6 +33,7 @@ export default function ProjectList({ ontoggle }) {
   const [hoveredId, setHoveredId] = useState(null);
   const [deletingId, setDeletingId] = useState(null);
   const { id, projectId } = useParams();
+  const { isDark } = useTheme();
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:4000';
   const Project_API_END_POINT = `${API_BASE_URL}/Task`;
 
@@ -316,7 +318,7 @@ export default function ProjectList({ ontoggle }) {
                         : 'transparent',
                     border: isActive
                       ? '1px solid rgba(124,58,237,0.35)'
-                      : '1px solid transparent',
+                      : isDark ? '1px solid transparent' : '1px solid transparent',
                     transition: 'all 0.18s ease',
                     position: 'relative',
                     overflow: 'hidden',

@@ -6,6 +6,7 @@ import Heading from '@tiptap/extension-heading';
 import TableOfContents from './EditorComponents/TOC';
 import EditorToolbar from './EditorComponents/EditorToolbar';
 import { useState, useEffect, useRef } from 'react';
+import { useTheme } from '../ThemeContext.jsx';
 import html2pdf from 'html2pdf.js';
 import Underline from '@tiptap/extension-underline';
 import { TextStyle } from '@tiptap/extension-text-style';
@@ -22,7 +23,7 @@ import axios from 'axios';
 import { motion, AnimatePresence } from 'framer-motion';
 
 /* ─── Inline styles ─────────────────────────────────────────── */
-const EDITOR_CSS = `
+const getEditorCss = (isDark) => `
 @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap');
 
 .quasar-editor-wrap .ProseMirror {
@@ -31,13 +32,13 @@ const EDITOR_CSS = `
   font-family: 'Manrope', sans-serif;
   font-size: 16px;
   line-height: 1.8;
-  color: #e4e4e7;
+  color: ${isDark ? '#e4e4e7' : '#0f172a'};
   caret-color: #7c3aed;
 }
 
 .quasar-editor-wrap .ProseMirror p.is-editor-empty:first-child::before {
   content: attr(data-placeholder);
-  color: #3f3f46;
+  color: ${isDark ? '#3f3f46' : '#64748b'};
   pointer-events: none;
   position: absolute;
   font-style: italic;
@@ -46,45 +47,45 @@ const EDITOR_CSS = `
 .quasar-editor-wrap .ProseMirror p { margin: 0 0 0.75em; }
 
 .quasar-editor-wrap .ProseMirror h1 {
-  font-size: 2em; font-weight: 800; color: #fff;
+  font-size: 2em; font-weight: 800; color: ${isDark ? '#fff' : '#0f172a'};
   letter-spacing: -0.03em; margin: 1.2em 0 0.4em; line-height: 1.2;
 }
 .quasar-editor-wrap .ProseMirror h2 {
-  font-size: 1.5em; font-weight: 700; color: #f4f4f5;
+  font-size: 1.5em; font-weight: 700; color: ${isDark ? '#f4f4f5' : '#1e293b'};
   letter-spacing: -0.02em; margin: 1em 0 0.4em; line-height: 1.3;
 }
 .quasar-editor-wrap .ProseMirror h3 {
-  font-size: 1.2em; font-weight: 600; color: #e4e4e7;
+  font-size: 1.2em; font-weight: 600; color: ${isDark ? '#e4e4e7' : '#1f2937'};
   margin: 0.9em 0 0.35em;
 }
 .quasar-editor-wrap .ProseMirror h4, .quasar-editor-wrap .ProseMirror h5, .quasar-editor-wrap .ProseMirror h6 {
-  font-weight: 600; color: #d4d4d8; margin: 0.8em 0 0.3em;
+  font-weight: 600; color: ${isDark ? '#d4d4d8' : '#475569'}; margin: 0.8em 0 0.3em;
 }
 
-.quasar-editor-wrap .ProseMirror strong { color: #fff; font-weight: 700; }
-.quasar-editor-wrap .ProseMirror em { color: #a1a1aa; }
-.quasar-editor-wrap .ProseMirror s { color: #71717a; }
+.quasar-editor-wrap .ProseMirror strong { color: ${isDark ? '#fff' : '#0f172a'}; font-weight: 700; }
+.quasar-editor-wrap .ProseMirror em { color: ${isDark ? '#a1a1aa' : '#475569'}; }
+.quasar-editor-wrap .ProseMirror s { color: ${isDark ? '#71717a' : '#6b7280'}; }
 
 .quasar-editor-wrap .ProseMirror ul,
 .quasar-editor-wrap .ProseMirror ol {
   padding-left: 1.6em; margin: 0.5em 0 0.75em;
 }
-.quasar-editor-wrap .ProseMirror li { margin: 0.2em 0; color: #d4d4d8; }
+.quasar-editor-wrap .ProseMirror li { margin: 0.2em 0; color: ${isDark ? '#d4d4d8' : '#334155'}; }
 .quasar-editor-wrap .ProseMirror li::marker { color: #7c3aed; }
 
 .quasar-editor-wrap .ProseMirror code {
-  background: rgba(124,58,237,0.12);
-  border: 1px solid rgba(124,58,237,0.2);
+  background: ${isDark ? 'rgba(124,58,237,0.12)' : 'rgba(124,58,237,0.08)'};
+  border: 1px solid ${isDark ? 'rgba(124,58,237,0.2)' : 'rgba(124,58,237,0.22)'};
   border-radius: 5px;
   padding: 1px 6px;
   font-size: 0.88em;
-  color: #a78bfa;
+  color: ${isDark ? '#a78bfa' : '#4338ca'};
   font-family: 'JetBrains Mono', 'Fira Code', monospace;
 }
 
 .quasar-editor-wrap .ProseMirror pre {
-  background: rgba(15,15,17,0.8);
-  border: 1px solid rgba(255,255,255,0.08);
+  background: ${isDark ? 'rgba(15,15,17,0.8)' : '#f8fafc'};
+  border: 1px solid ${isDark ? 'rgba(255,255,255,0.08)' : 'rgba(15,23,42,0.12)'};
   border-radius: 12px;
   padding: 1rem 1.25rem;
   margin: 1em 0;
@@ -94,7 +95,7 @@ const EDITOR_CSS = `
   background: none;
   border: none;
   padding: 0;
-  color: #e4e4e7;
+  color: ${isDark ? '#e4e4e7' : '#0f172a'};
   font-size: 14px;
 }
 
@@ -102,25 +103,25 @@ const EDITOR_CSS = `
   border-left: 3px solid #7c3aed;
   padding: 0.4em 0 0.4em 1.1em;
   margin: 1em 0;
-  color: #71717a;
+  color: ${isDark ? '#71717a' : '#475569'};
   font-style: italic;
-  background: rgba(124,58,237,0.04);
+  background: ${isDark ? 'rgba(124,58,237,0.04)' : 'rgba(124,58,237,0.08)'};
   border-radius: 0 8px 8px 0;
 }
 
 .quasar-editor-wrap .ProseMirror hr {
   border: none;
-  border-top: 1px solid rgba(255,255,255,0.08);
+  border-top: 1px solid ${isDark ? 'rgba(255,255,255,0.08)' : 'rgba(15,23,42,0.12)'};
   margin: 1.5em 0;
 }
 
 .quasar-editor-wrap .ProseMirror a {
-  color: #a78bfa;
+  color: ${isDark ? '#a78bfa' : '#4338ca'};
   text-decoration: underline;
-  text-decoration-color: rgba(167,139,250,0.4);
+  text-decoration-color: ${isDark ? 'rgba(167,139,250,0.4)' : 'rgba(67,56,202,0.3)'};
   transition: color 0.15s;
 }
-.quasar-editor-wrap .ProseMirror a:hover { color: #c4b5fd; }
+.quasar-editor-wrap .ProseMirror a:hover { color: ${isDark ? '#c4b5fd' : '#3730a3'}; }
 
 .quasar-editor-wrap .ProseMirror ul[data-type="taskList"] { padding-left: 0.4em; }
 .quasar-editor-wrap .ProseMirror li[data-type="taskItem"] {
@@ -133,14 +134,14 @@ const EDITOR_CSS = `
   accent-color: #7c3aed; width: 15px; height: 15px; cursor: pointer;
 }
 .quasar-editor-wrap .ProseMirror li[data-type="taskItem"][data-checked="true"] > div {
-  color: #71717a; text-decoration: line-through;
+  color: ${isDark ? '#71717a' : '#6b7280'}; text-decoration: line-through;
 }
 
 .quasar-editor-wrap .ProseMirror img {
   max-width: 100%;
   border-radius: 10px;
   margin: 0.5em 0;
-  border: 1px solid rgba(255,255,255,0.08);
+  border: 1px solid ${isDark ? 'rgba(255,255,255,0.08)' : 'rgba(15,23,42,0.12)'};
 }
 
 /* selection */
@@ -152,7 +153,10 @@ const EDITOR_CSS = `
 /* ─── Component ─────────────────────────────────────────────── */
 const Editor = ({ isMenuOpen, toggleMenu, isMobile, projectId, id, theme }) => {
   const [isEmpty, setIsEmpty] = useState(true);
-  const isDark = theme === 'dark';
+  const themeContext = useTheme();
+  const activeTheme = theme || themeContext.theme;
+  const isDark = activeTheme === 'dark';
+  const EDITOR_CSS = getEditorCss(isDark);
   const [saveState, setSaveState] = useState('saved'); // 'saved' | 'saving' | 'error'
   const [projectDetail, setProjectDetail] = useState(null);
   const [showMenu, setShowMenu] = useState(false);
@@ -297,7 +301,7 @@ const Editor = ({ isMenuOpen, toggleMenu, isMobile, projectId, id, theme }) => {
           >
             <Loader2 size={28} color="#7c3aed" />
           </motion.div>
-          <span style={{ color: '#71717a', fontSize: 13, fontFamily: "'Manrope', sans-serif" }}>
+          <span style={{ color: isDark ? '#c7c7d2' : '#475569', fontSize: 13, fontFamily: "'Manrope', sans-serif" }}>
             Loading project…
           </span>
         </div>
@@ -361,12 +365,12 @@ const Editor = ({ isMenuOpen, toggleMenu, isMobile, projectId, id, theme }) => {
 
             {/* Breadcrumb */}
             <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-              <FileText size={13} color="#71717a" />
+              <FileText size={13} color={isDark ? '#d4d4d8' : '#6b7280'} />
               <span style={{
                 fontFamily: "'Manrope', sans-serif",
                 fontSize: 14,
                 fontWeight: 600,
-                color: '#e4e4e7',
+                color: isDark ? '#e4e4e7' : '#0f172a',
                 maxWidth: isMobile ? 140 : 300,
                 overflow: 'hidden',
                 textOverflow: 'ellipsis',
@@ -431,7 +435,7 @@ const Editor = ({ isMenuOpen, toggleMenu, isMobile, projectId, id, theme }) => {
                   alignItems: 'center',
                   padding: '5px 8px',
                   borderRadius: 8,
-                  color: '#71717a',
+                  color: isDark ? '#d4d4d8' : '#475569',
                   cursor: 'default',
                   fontSize: 12,
                   fontFamily: "'Manrope', sans-serif",
@@ -446,16 +450,16 @@ const Editor = ({ isMenuOpen, toggleMenu, isMobile, projectId, id, theme }) => {
             {/* Menu button */}
             <div style={{ position: 'relative' }}>
               <motion.button
-                whileHover={{ scale: 1.05, background: 'rgba(255,255,255,0.08)' }}
+                whileHover={{ scale: 1.05, background: isDark ? 'rgba(255,255,255,0.08)' : 'rgba(15,23,42,0.08)' }}
                 whileTap={{ scale: 0.93 }}
                 onClick={() => setShowMenu(m => !m)}
                 style={{
-                  background: 'rgba(255,255,255,0.05)',
-                  border: '1px solid rgba(255,255,255,0.08)',
+                  background: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(15,23,42,0.05)',
+                  border: isDark ? '1px solid rgba(255,255,255,0.08)' : '1px solid rgba(15,23,42,0.12)',
                   borderRadius: 8,
                   padding: 7,
                   cursor: 'pointer',
-                  color: '#b4b4b8',
+                  color: isDark ? '#b4b4b8' : '#475569',
                   display: 'flex',
                   alignItems: 'center',
                   transition: 'all 0.15s',
@@ -475,12 +479,12 @@ const Editor = ({ isMenuOpen, toggleMenu, isMobile, projectId, id, theme }) => {
                       position: 'absolute',
                       top: 'calc(100% + 8px)',
                       right: 0,
-                      background: '#1d1d22',
-                      border: '1px solid rgba(255,255,255,0.1)',
+                      background: isDark ? '#1d1d22' : '#ffffff',
+                      border: isDark ? '1px solid rgba(255,255,255,0.1)' : '1px solid rgba(15,23,42,0.12)',
                       borderRadius: 12,
                       padding: '6px',
                       minWidth: 180,
-                      boxShadow: '0 20px 40px rgba(0,0,0,0.5)',
+                      boxShadow: isDark ? '0 20px 40px rgba(0,0,0,0.5)' : '0 20px 40px rgba(15,23,42,0.12)',
                       zIndex: 50,
                     }}
                   >
@@ -502,7 +506,7 @@ const Editor = ({ isMenuOpen, toggleMenu, isMobile, projectId, id, theme }) => {
                           border: 'none',
                           borderRadius: 8,
                           cursor: 'pointer',
-                          color: '#b4b4b8',
+                          color: isDark ? '#e4e4e7' : '#0f172a',
                           fontSize: 13,
                           fontFamily: "'Manrope', sans-serif",
                           fontWeight: 500,
@@ -510,7 +514,7 @@ const Editor = ({ isMenuOpen, toggleMenu, isMobile, projectId, id, theme }) => {
                           transition: 'background 0.15s',
                         }}
                       >
-                        <span style={{ color: '#71717a' }}>{item.icon}</span>
+                        <span style={{ color: isDark ? '#9ca3af' : '#6b7280' }}>{item.icon}</span>
                         {item.label}
                       </motion.button>
                     ))}
@@ -589,7 +593,7 @@ const Editor = ({ isMenuOpen, toggleMenu, isMobile, projectId, id, theme }) => {
             boxShadow: isDark ? '0 8px 40px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.04) inset' : '0 8px 40px rgba(15,23,42,0.15), 0 0 0 1px rgba(15,23,42,0.08) inset',
           }}
         >
-          <EditorToolbar editor={editor} theme={theme} />
+          <EditorToolbar editor={editor} theme={activeTheme} />
         </motion.div>
 
         {/* Click-outside to close menu */}

@@ -1,5 +1,6 @@
 import axios from 'axios';
 import React, { useState, useEffect } from 'react';
+import { useTheme } from '../ThemeContext.jsx';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Eye, EyeOff, X, Sparkles, AlertCircle, UserPlus } from 'lucide-react';
@@ -31,6 +32,7 @@ export default function Register({ handleShow }) {
   const [errors, setErrors] = useState({ name: '', email: '', password: '', all: '' });
   const [focused, setFocused] = useState('');
   const [showX, setShowX] = useState(false);
+  const { isDark } = useTheme();
 
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:4000';
   const USER_API_END_POINT = `${API_BASE_URL}/User`;
@@ -153,15 +155,15 @@ export default function Register({ handleShow }) {
             }}>
               <Sparkles size={16} color="#fff" />
             </div>
-            <span style={{ fontFamily: "'Manrope', sans-serif", fontWeight: 800, fontSize: 20, color: '#fff', letterSpacing: '-0.3px' }}>
+            <span style={{ fontFamily: "'Manrope', sans-serif", fontWeight: 800, fontSize: 20, color: isDark ? '#fff' : '#111827', letterSpacing: '-0.3px' }}>
               Quasar
             </span>
           </div>
 
-          <h2 style={{ fontFamily: "'Manrope', sans-serif", fontWeight: 700, fontSize: 22, color: '#fff', marginBottom: 4, letterSpacing: '-0.3px' }}>
+          <h2 style={{ fontFamily: "'Manrope', sans-serif", fontWeight: 700, fontSize: 22, color: isDark ? '#fff' : '#111827', marginBottom: 4, letterSpacing: '-0.3px' }}>
             Create an account
           </h2>
-          <p style={{ fontFamily: "'Manrope', sans-serif", fontSize: 14, color: '#71717a', marginBottom: 24 }}>
+          <p style={{ fontFamily: "'Manrope', sans-serif", fontSize: 14, color: isDark ? '#a1a1aa' : '#475569', marginBottom: 24 }}>
             Start writing, organizing and collaborating
           </p>
 

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTheme } from '../ThemeContext.jsx';
 import { motion, AnimatePresence } from 'framer-motion';
 import Login from './Login';
 import Register from './Register';
@@ -44,6 +45,7 @@ export default function First() {
   const userId = localStorage.getItem('userId');
   const projectId = localStorage.getItem('projectId');
   const navigate = useNavigate();
+  const { isDark } = useTheme();
 
   const showLogin = () => setShow({ login: !show.login, register: false });
   const showRegister = () => setShow({ register: !show.register, login: false });
@@ -65,13 +67,12 @@ export default function First() {
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800;900&display=swap');
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-        body { background: #0f0f11; color: #e4e4e7; font-family: 'Manrope', sans-serif; }
         ::-webkit-scrollbar { width: 4px; }
         ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 4px; }
         a { text-decoration: none; color: inherit; }
       `}</style>
 
-      <div style={{ minHeight: '100vh', background: '#0f0f11', overflowX: 'hidden' }}>
+      <div style={{ minHeight: '100vh', background: isDark ? '#0f0f11' : '#f8fafc', overflowX: 'hidden' }}>
 
         {/* ── Navbar ── */}
         <motion.nav
@@ -179,7 +180,7 @@ export default function First() {
             style={{
               fontSize: 'clamp(40px, 7vw, 76px)',
               fontWeight: 900,
-              color: '#ffffff',
+              color: isDark ? '#ffffff' : '#111827',
               letterSpacing: '-0.04em',
               lineHeight: 1.08,
               maxWidth: 760,
@@ -199,7 +200,7 @@ export default function First() {
             transition={{ delay: 0.16, duration: 0.5 }}
             style={{
               fontSize: 'clamp(15px, 2vw, 18px)',
-              color: '#71717a', lineHeight: 1.7,
+              color: isDark ? '#9ca3af' : '#475569', lineHeight: 1.7,
               maxWidth: 520, marginBottom: 36,
             }}
           >
@@ -237,9 +238,9 @@ export default function First() {
               onClick={showLogin}
               style={{
                 padding: '14px 28px', borderRadius: 12,
-                background: 'rgba(255,255,255,0.04)',
-                border: '1px solid rgba(255,255,255,0.1)',
-                color: '#b4b4b8', fontSize: 15, fontWeight: 600,
+                background: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(15,23,42,0.05)',
+                border: isDark ? '1px solid rgba(255,255,255,0.1)' : '1px solid rgba(15,23,42,0.12)',
+                color: isDark ? '#d1d5db' : '#475569', fontSize: 15, fontWeight: 600,
                 cursor: 'pointer', fontFamily: "'Manrope', sans-serif",
                 transition: 'all 0.15s',
               }}
@@ -258,10 +259,10 @@ export default function First() {
             transition={{ duration: 0.5 }}
             style={{ textAlign: 'center', marginBottom: 48 }}
           >
-            <h2 style={{ fontSize: 'clamp(26px,4vw,40px)', fontWeight: 800, color: '#fff', letterSpacing: '-0.03em', marginBottom: 10 }}>
+            <h2 style={{ fontSize: 'clamp(26px,4vw,40px)', fontWeight: 800, color: isDark ? '#fff' : '#111827', letterSpacing: '-0.03em', marginBottom: 10 }}>
               Everything you need
             </h2>
-            <p style={{ color: '#71717a', fontSize: 16 }}>Powerful features in a beautifully simple package.</p>
+            <p style={{ color: isDark ? '#9ca3af' : '#475569', fontSize: 16 }}>Powerful features in a beautifully simple package.</p>
           </motion.div>
 
           <div style={{
@@ -280,8 +281,8 @@ export default function First() {
                 transition={{ delay: i * 0.08, duration: 0.4 }}
                 whileHover={{ y: -4, boxShadow: '0 16px 40px rgba(0,0,0,0.4)' }}
                 style={{
-                  background: '#151518',
-                  border: '1px solid rgba(255,255,255,0.07)',
+                  background: isDark ? '#151518' : '#ffffff',
+                  border: isDark ? '1px solid rgba(255,255,255,0.07)' : '1px solid rgba(15,23,42,0.08)',
                   borderRadius: 16,
                   padding: '24px 22px',
                   transition: 'box-shadow 0.2s, transform 0.2s',
@@ -296,8 +297,8 @@ export default function First() {
                 }}>
                   {f.icon}
                 </div>
-                <h3 style={{ fontSize: 15, fontWeight: 700, color: '#fff', marginBottom: 6 }}>{f.title}</h3>
-                <p style={{ fontSize: 13, color: '#71717a', lineHeight: 1.6 }}>{f.desc}</p>
+                <h3 style={{ fontSize: 15, fontWeight: 700, color: isDark ? '#fff' : '#111827', marginBottom: 6 }}>{f.title}</h3>
+                <p style={{ fontSize: 13, color: isDark ? '#9ca3af' : '#475569', lineHeight: 1.6 }}>{f.desc}</p>
               </motion.div>
             ))}
           </div>
@@ -312,10 +313,10 @@ export default function First() {
             transition={{ duration: 0.5 }}
             style={{ textAlign: 'center', marginBottom: 48 }}
           >
-            <h2 style={{ fontSize: 'clamp(26px,4vw,40px)', fontWeight: 800, color: '#fff', letterSpacing: '-0.03em', marginBottom: 10 }}>
+            <h2 style={{ fontSize: 'clamp(26px,4vw,40px)', fontWeight: 800, color: isDark ? '#fff' : '#111827', letterSpacing: '-0.03em', marginBottom: 10 }}>
               How it works
             </h2>
-            <p style={{ color: '#71717a', fontSize: 16 }}>Three simple steps to get started.</p>
+            <p style={{ color: isDark ? '#9ca3af' : '#475569', fontSize: 16 }}>Three simple steps to get started.</p>
           </motion.div>
 
           <div style={{
@@ -333,8 +334,8 @@ export default function First() {
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1, duration: 0.4 }}
                 style={{
-                  background: '#151518',
-                  border: '1px solid rgba(255,255,255,0.07)',
+                  background: isDark ? '#151518' : '#ffffff',
+                  border: isDark ? '1px solid rgba(255,255,255,0.07)' : '1px solid rgba(15,23,42,0.08)',
                   borderRadius: 16,
                   padding: '28px 22px',
                   textAlign: 'center',
@@ -344,8 +345,8 @@ export default function First() {
                 <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.08em', color: '#7c3aed', textTransform: 'uppercase', marginBottom: 6 }}>
                   {s.step}
                 </div>
-                <h4 style={{ fontSize: 16, fontWeight: 700, color: '#fff', marginBottom: 8 }}>{s.title}</h4>
-                <p style={{ fontSize: 13, color: '#71717a', lineHeight: 1.6 }}>{s.desc}</p>
+                <h4 style={{ fontSize: 16, fontWeight: 700, color: isDark ? '#fff' : '#111827', marginBottom: 8 }}>{s.title}</h4>
+                <p style={{ fontSize: 13, color: isDark ? '#9ca3af' : '#475569', lineHeight: 1.6 }}>{s.desc}</p>
               </motion.div>
             ))}
           </div>
@@ -372,10 +373,10 @@ export default function First() {
               background: 'radial-gradient(circle, rgba(124,58,237,0.2), transparent 70%)',
               pointerEvents: 'none',
             }} />
-            <h2 style={{ fontSize: 'clamp(24px,4vw,36px)', fontWeight: 800, color: '#fff', letterSpacing: '-0.03em', marginBottom: 12 }}>
+            <h2 style={{ fontSize: 'clamp(24px,4vw,36px)', fontWeight: 800, color: isDark ? '#fff' : '#111827', letterSpacing: '-0.03em', marginBottom: 12 }}>
               Ready to start writing?
             </h2>
-            <p style={{ color: '#71717a', fontSize: 15, marginBottom: 28, lineHeight: 1.6 }}>
+            <p style={{ color: isDark ? '#9ca3af' : '#475569', fontSize: 15, marginBottom: 28, lineHeight: 1.6 }}>
               Join thousands of writers, students, and teams who trust Quasar to capture their best ideas.
             </p>
             {['Free forever', 'No credit card required', 'Cancel anytime'].map(item => (
@@ -407,7 +408,7 @@ export default function First() {
 
         {/* ── Footer ── */}
         <footer style={{
-          borderTop: '1px solid rgba(255,255,255,0.06)',
+          borderTop: isDark ? '1px solid rgba(255,255,255,0.06)' : '1px solid rgba(15,23,42,0.12)',
           padding: 'clamp(32px,5vh,60px) clamp(20px,5vw,80px)',
         }}>
           <div style={{
@@ -425,9 +426,9 @@ export default function First() {
                 }}>
                   <Sparkles size={13} color="#fff" />
                 </div>
-                <span style={{ fontWeight: 800, fontSize: 16, color: '#fff' }}>Quasar</span>
+                <span style={{ fontWeight: 800, fontSize: 16, color: isDark ? '#fff' : '#111827' }}>Quasar</span>
               </div>
-              <p style={{ fontSize: 13, color: '#52525b', lineHeight: 1.6 }}>
+              <p style={{ fontSize: 13, color: isDark ? '#94a3b8' : '#475569', lineHeight: 1.6 }}>
                 Write. Share. Collaborate.
               </p>
             </div>
@@ -438,7 +439,7 @@ export default function First() {
                 Quick Links
               </h3>
               {[['Home', '/'], ['Login', '/login'], ['Sign Up', '/register']].map(([label, href]) => (
-                <a key={label} href={href} style={{ display: 'block', fontSize: 14, color: '#52525b', marginBottom: 8, transition: 'color 0.15s' }}
+                <a key={label} href={href} style={{ display: 'block', fontSize: 14, color: isDark ? '#94a3b8' : '#475569', marginBottom: 8, transition: 'color 0.15s' }}
                   onMouseEnter={e => e.target.style.color = '#a78bfa'}
                   onMouseLeave={e => e.target.style.color = '#52525b'}
                 >

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTheme } from '../ThemeContext.jsx';
 import Editor from './Editor';
 import User from './User';
 import ProjectList from './ProjectList';
@@ -10,16 +11,7 @@ export default function Show() {
   const { id, projectId } = useParams();
   const [isMobile, setIsMobile] = useState(window.innerWidth < 1024);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [theme, setTheme] = useState(() => localStorage.getItem('theme') || 'dark');
-
-  const isDark = theme === 'dark';
-  const toggleTheme = () => setTheme(prev => prev === 'dark' ? 'light' : 'dark');
-
-  useEffect(() => {
-    localStorage.setItem('theme', theme);
-    document.body.style.background = isDark ? '#0f0f11' : '#f8fafc';
-    document.body.style.color = isDark ? '#f8fafc' : '#111827';
-  }, [theme, isDark]);
+  const { theme, isDark, toggleTheme } = useTheme();
 
   const toggleMenu = () => setIsMenuOpen(prev => !prev);
 

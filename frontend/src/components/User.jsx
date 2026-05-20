@@ -1,11 +1,14 @@
 import axios from 'axios';
 import React, { useState, useEffect, useRef } from 'react';
+import { useTheme } from '../ThemeContext.jsx';
 import { useParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { LogOut, Mail, User as UserIcon } from 'lucide-react';
 
 export default function User({ theme }) {
-  const isDark = theme === 'dark';
+  const themeContext = useTheme();
+  const activeTheme = theme || themeContext.theme;
+  const isDark = activeTheme === 'dark';
   const [isOpen, setIsOpen] = useState(false);
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:4000';
   const USER_API_END_POINT = `${API_BASE_URL}/User`;

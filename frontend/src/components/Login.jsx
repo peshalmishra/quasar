@@ -1,6 +1,5 @@
 import axios from 'axios';
-import React, { useState, useEffect } from 'react';
-import { useNavigate, Link, useLocation } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';import { useTheme } from '../ThemeContext.jsx';import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Eye, EyeOff, X, Sparkles, AlertCircle, LogIn } from 'lucide-react';
 
@@ -35,6 +34,7 @@ export default function Login({ handleShow }) {
   const [showPassword, setShowPassword] = useState(false);
   const [showX, setShowX] = useState(false);
   const [focused, setFocused] = useState('');
+  const { isDark } = useTheme();
 
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:4000';
   const USER_API_END_POINT = `${API_BASE_URL}/User`;
@@ -119,7 +119,7 @@ export default function Login({ handleShow }) {
           justifyContent: 'center',
           zIndex: showX ? 101 : 'auto',
           minHeight: showX ? 'auto' : '100vh',
-          background: showX ? 'transparent' : '#0f0f11',
+          background: showX ? 'transparent' : isDark ? '#0f0f11' : '#f8fafc',
           padding: 16,
         }}
       >
@@ -130,12 +130,12 @@ export default function Login({ handleShow }) {
           style={{
             width: '100%',
             maxWidth: 400,
-            background: '#151518',
-            border: '1px solid rgba(255,255,255,0.08)',
+            background: isDark ? '#151518' : '#ffffff',
+            border: isDark ? '1px solid rgba(255,255,255,0.08)' : '1px solid rgba(15,23,42,0.12)',
             borderRadius: 20,
             padding: 32,
             position: 'relative',
-            boxShadow: '0 32px 80px rgba(0,0,0,0.6)',
+            boxShadow: isDark ? '0 32px 80px rgba(0,0,0,0.6)' : '0 24px 60px rgba(15,23,42,0.12)',
           }}
         >
           {/* Close */}
@@ -146,10 +146,10 @@ export default function Login({ handleShow }) {
               onClick={handleShow}
               style={{
                 position: 'absolute', top: 16, right: 16,
-                background: 'rgba(255,255,255,0.06)',
-                border: '1px solid rgba(255,255,255,0.08)',
+                background: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(15,23,42,0.08)',
+                border: isDark ? '1px solid rgba(255,255,255,0.08)' : '1px solid rgba(15,23,42,0.12)',
                 borderRadius: 8, padding: 6, cursor: 'pointer',
-                color: '#71717a', display: 'flex', alignItems: 'center',
+                color: isDark ? '#cbd5e1' : '#475569', display: 'flex', alignItems: 'center',
               }}
             >
               <X size={15} />
@@ -166,15 +166,14 @@ export default function Login({ handleShow }) {
             }}>
               <Sparkles size={16} color="#fff" />
             </div>
-            <span style={{ fontFamily: "'Manrope', sans-serif", fontWeight: 800, fontSize: 20, color: '#fff', letterSpacing: '-0.3px' }}>
+            <span style={{ fontFamily: "'Manrope', sans-serif", fontWeight: 800, fontSize: 20, color: isDark ? '#fff' : '#111827', letterSpacing: '-0.3px' }}>
               Quasar
             </span>
           </div>
-
-          <h2 style={{ fontFamily: "'Manrope', sans-serif", fontWeight: 700, fontSize: 22, color: '#fff', marginBottom: 4, letterSpacing: '-0.3px' }}>
+          <h2 style={{ fontFamily: "'Manrope', sans-serif", fontWeight: 700, fontSize: 22, color: isDark ? '#fff' : '#111827', marginBottom: 4, letterSpacing: '-0.3px' }}>
             Welcome back
           </h2>
-          <p style={{ fontFamily: "'Manrope', sans-serif", fontSize: 14, color: '#71717a', marginBottom: 24 }}>
+          <p style={{ fontFamily: "'Manrope', sans-serif", fontSize: 14, color: isDark ? '#a1a1aa' : '#475569', marginBottom: 24 }}>
             Sign in to your account to continue
           </p>
 
@@ -247,7 +246,7 @@ export default function Login({ handleShow }) {
                   style={{
                     position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)',
                     background: 'none', border: 'none', cursor: 'pointer',
-                    color: '#52525b', display: 'flex', padding: 2,
+                    color: isDark ? '#d1d5db' : '#475569', display: 'flex', padding: 2,
                   }}
                 >
                   {showPassword ? <EyeOff size={15} /> : <Eye size={15} />}
