@@ -1,133 +1,253 @@
-<h1>📝 Quasar – Full Stack Collaborative Text Editor</h1>
+# Quasar
 
-Quasar is a full-stack web application for managing projects and editing documents collaboratively. It features a modern React (Vite) frontend and a Node.js/Express backend, both containerized with Docker for easy deployment.
+Quasar is a full-stack productivity workspace for creating projects, organizing tasks, and writing rich-text documents in a polished single-page experience. The application combines a React + Vite frontend with a Node.js + Express backend and a MongoDB data layer, and it can be run locally with Docker Compose or deployed to Kubernetes.
 
----
+## Overview
 
-## 🚀 Features
+This project is designed around three core workflows:
 
-- User authentication and registration
-- Project and task management
-- Rich text editing with advanced formatting (powered by TipTap)
-- Real-time auto-save and PDF export
-- Responsive, mobile-friendly UI
-- Secure API with JWT authentication
-- Dockerized for simple local development and cloud deployment
+1. User authentication and account management
+2. Project and task tracking with status-based workflows
+3. Rich-text document editing with auto-save and export support
 
----
+The UI is centered around a modern dashboard experience with animated cards, a task board, and a document editor powered by TipTap.
 
-## 🛠️ Tech Stack
+## Key Features
 
-- **Frontend:** React, Vite, TipTap, Bootstrap, Lucide Icons, Axios, Framer Motion, HTML2PDF
-- **Backend:** Node.js, Express, MongoDB (via Mongoose)
-- **DevOps:** Docker, Docker Compose
+- Secure signup/login with JWT-based authentication
+- Project creation, editing, deletion, and membership management
+- Task creation and status updates for todo, in progress, and done states
+- Dashboard analytics for project and task progress
+- Rich text editor with headings, lists, links, highlights, images, and task lists
+- Auto-save for document content
+- PDF export for documents
+- Dockerized frontend, backend, and MongoDB stack
+- Kubernetes deployment manifests for local cluster environments
 
----
+## Architecture
 
-## 📦 Getting Started
+### Frontend
 
-### 1. Clone the repository
+The frontend is a React single-page application built with Vite and React Router. It uses:
 
-```sh
-git clone https://github.com/your-username/quasar.git
-cd quasar
-```
+- React 18 for component-based UI
+- React Router for navigation between auth, dashboard, task board, and editor views
+- Framer Motion for animated transitions
+- Bootstrap and custom CSS for styling
+- Lucide icons for UI visuals
+- Axios for API communication
+- TipTap for the document editor experience
+- html2pdf.js for PDF export
 
-### 2. Set up environment variables
+### Backend
 
-Create a `.env` file in the `backend` folder with the following:
+The backend is a REST-style API implemented with Express and MongoDB. It provides endpoints for:
 
-```
-MONGO_URI=your_mongodb_uri
-JWT_SECRET=your_jwt_secret
-```
+- User registration and login
+- Project CRUD and member assignment
+- Task CRUD, status updates, and attachments
+- Project detail and task retrieval operations
 
-### 3. Run with Docker Compose (recommended)
+Authentication is enforced with JWT middleware via the backend auth layer.
 
-```sh
-docker-compose up --build
-```
+### Data Model
 
-This will start both frontend and backend containers.
+The application uses three main entities:
 
-### 4. Or run manually
+- User: stores authentication-related profile data and role information
+- Project: holds project metadata, owner, members, status, and description
+- Task: belongs to a project, can have an assignee, status, and optional attachments
 
-#### Backend
-```sh
-cd backend
-npm install
-npm run dev
-```
+## Main Components
 
-#### Frontend
-```sh
-cd frontend
-npm install
-npm run dev
-```
+### Frontend components
 
-### 5. Access the application
+The main UI pieces are organized in the frontend component tree:
 
-- Frontend: [http://localhost:4173](http://localhost:4173)
-- Backend API: [http://localhost:4000](http://localhost:4000)
+- App.jsx: application router setup and theme provider
+- First.jsx: landing experience with sign-in/sign-up entry points
+- Login.jsx: authentication UI
+- Register.jsx: new user registration UI
+- ProtectedRoute.jsx: route guard for authenticated users
+- Dashboard.jsx: project overview and analytics dashboard
+- ProjectForm.jsx: create/edit project form
+- ProjectList.jsx: project listing view
+- TaskBoard.jsx: task workflow board UI
+- TaskForm.jsx: task create/edit form
+- Show.jsx: task/project detail view
+- Editor.jsx: document editor experience
+- User.jsx: user-related UI
+- EditorComponents/EditorToolbar.jsx: formatting toolbar for the editor
+- EditorComponents/TOC.jsx: table of contents support for editor content
 
----
+### Hooks and utilities
 
-## 📂 Folder Structure
+- useProjects.js: project data and CRUD logic
+- useTasks.js: task data and task-related operations
+- use-tiptap-editor.js: editor setup helpers
+- use-floating-element.js: UI positioning helpers for floating UI elements
 
-```
-quasar/
+## Technology Stack
+
+### Frontend
+
+- React
+- Vite
+- React Router DOM
+- TipTap editor ecosystem
+- Bootstrap
+- Framer Motion
+- Axios
+- Lucide React
+- html2pdf.js
+- react-beautiful-dnd
+- react-hotkeys-hook
+
+### Backend
+
+- Node.js
+- Express.js
+- MongoDB
+- Mongoose
+- JWT
+- bcryptjs
+- CORS
+- dotenv
+
+### DevOps and Deployment
+
+- Docker
+- Docker Compose
+- Kubernetes manifests in the k8s folder
+
+## Project Structure
+
+```text
+.
 ├── backend/
 │   ├── controllers/
+│   ├── Middleware/
 │   ├── models/
 │   ├── routers/
-│   ├── Middleware/
-│   ├── db.js
 │   ├── app.js
-│   └── Dockerfile
+│   ├── db.js
+│   ├── Dockerfile
+│   └── package.json
 ├── frontend/
+│   ├── public/
 │   ├── src/
 │   │   ├── components/
 │   │   ├── hooks/
 │   │   ├── styles/
 │   │   ├── App.jsx
-│   │   └── main.jsx
-│   ├── public/
+│   │   ├── main.jsx
+│   │   └── ThemeContext.jsx
 │   ├── Dockerfile
-│   └── vite.config.js
-└── docker-compose.yml
+│   ├── eslint.config.js
+│   ├── package.json
+│   ├── vite.config.js
+│   └── index.html
+├── k8s/
+├── docker-compose.yml
+└── README.md
 ```
 
----
+## Environment Variables
 
-## 📈 Future Enhancements
+Create a backend/.env file before running the server.
 
-- Real-time collaboration (multi-user editing)
-- Notification system
-- Task categories and priorities
-- Subtasks and comments
-- Cloud deployment guides
+```env
+MONGO_URI=your_mongodb_connection_string
+JWT_SECRET=your_jwt_secret
+PORT=4000
+CORS_ORIGIN=http://localhost:4173
+```
 
----
+## Getting Started
 
-## ☸️ Kubernetes Deployment (Minikube)
+### Prerequisites
 
-The `k8s/` folder contains production-ready manifests for running Quasar in Minikube with separate frontend and backend services.
+- Node.js and npm
+- Docker and Docker Compose (optional, recommended)
+- MongoDB (or use Docker Compose for a local container)
 
-### Files included
+### Option 1: Run with Docker Compose
 
-- `k8s/namespace.yaml` – creates a dedicated `quasar` namespace.
-- `k8s/frontend-deployment.yaml` – deployment for the React/Vite frontend.
-- `k8s/frontend-service.yaml` – exposes frontend via `NodePort`.
-- `k8s/backend-configmap.yaml` – backend configuration values for non-sensitive environment variables.
-- `k8s/backend-secret.yaml` – secure backend secrets for MongoDB and JWT.
-- `k8s/backend-deployment.yaml` – deployment for the Node/Express backend.
-- `k8s/backend-service.yaml` – internal `ClusterIP` service for backend access.
-- `k8s/ingress.yaml` – optional ingress route for `quasar.local` (requires an ingress controller).
+```bash
+docker compose up --build
+```
 
-### Kubernetes setup commands
+This starts:
 
-```sh
+- MongoDB on port 27017
+- Backend on port 4000
+- Frontend on port 4173
+
+### Option 2: Run locally
+
+#### Backend
+
+```bash
+cd backend
+npm install
+npm start
+```
+
+#### Frontend
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+### Local URLs
+
+- Frontend: http://localhost:4173 (Docker) or http://localhost:5173 (Vite dev server)
+- Backend API: http://localhost:4000
+
+## API Overview
+
+The backend exposes the main routes under the following prefixes:
+
+- /User
+  - POST /User/register
+  - POST /User/login
+  - GET /User/showDetails/:id
+- /Project
+  - POST /Project/create
+  - GET /Project/all
+  - GET /Project/:id
+  - PUT /Project/:id
+  - DELETE /Project/:id
+  - POST /Project/:id/members
+- /Task
+  - POST /Task/addtask
+  - PUT /Task/edittask/:id
+  - PATCH /Task/status/:id
+  - DELETE /Task/deleteTask/:id
+  - GET /Task/showTask/:id
+  - GET /Task/showOne/:id/:projectId
+  - GET /Task/byProject/:projectId
+  - POST /Task/upload/:id
+  - DELETE /Task/:id/attachment/:attachmentId
+
+## Kubernetes Deployment
+
+The k8s folder includes manifests for a basic deployment setup:
+
+- namespace.yaml
+- backend-configmap.yaml
+- backend-secret.yaml
+- backend-deployment.yaml
+- backend-service.yaml
+- frontend-deployment.yaml
+- frontend-service.yaml
+- ingress.yaml
+
+Example deployment flow:
+
+```bash
 kubectl apply -f k8s/namespace.yaml
 kubectl apply -n quasar -f k8s/backend-configmap.yaml
 kubectl apply -n quasar -f k8s/backend-secret.yaml
@@ -135,43 +255,23 @@ kubectl apply -n quasar -f k8s/backend-deployment.yaml
 kubectl apply -n quasar -f k8s/backend-service.yaml
 kubectl apply -n quasar -f k8s/frontend-deployment.yaml
 kubectl apply -n quasar -f k8s/frontend-service.yaml
-# Optional ingress if using an ingress controller
-kubectl apply -n quasar -f k8s/ingress.yaml
 ```
 
-### Notes
+## Future Improvements
 
-- Frontend connects to backend at `http://quasar-backend-service:4000` inside the cluster.
-- Backend uses environment examples for `MONGO_URI`, `JWT_SECRET`, `PORT`, and `CORS_ORIGIN`.
-- The frontend service is exposed externally via NodePort `30073`.
-- The backend service remains internal as `ClusterIP`.
+Potential enhancements for the project include:
 
-### Minikube ingress setup example
+- Real-time multi-user collaboration
+- Notifications and activity feeds
+- Advanced task filtering and search
+- Subtasks and comments
+- Improved attachment management
+- CI/CD pipelines and automated testing
 
-If using `minikube` with an NGINX ingress controller:
+## License
 
-```sh
-minikube addons enable ingress
-kubectl apply -n quasar -f k8s/ingress.yaml
-```
+This project is provided for educational and development purposes. Add your preferred license if you plan to distribute or extend it.
 
-Then add `quasar.local` to your `/etc/hosts` or system hosts file, pointing to the Minikube IP.
+## Contributing
 
----
-
-## 📜 License
-
-This project is licensed under the **MIT License**.
-
----
-
-## 🤝 Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request or open an Issue if you have any suggestions or improvements in mind.
-
----
-
-## 🧑‍💻 Author
-
-- <a href="https://github.com/mayur777-ui"><img src="https://img.icons8.com/ios-glyphs/30/github.png" alt="GitHub Icon"/> Mayur Lakshkar</a>
-- <a href="https://linkedin.com/in/mayur-lakshkar"><img src="https://img.icons8.com/ios-filled/30/linkedin.png" alt="LinkedIn Icon"/> Mayur Lakshkar</a>
+Contributions are welcome. If you want to improve the application, open an issue or submit a pull request with a clear description of the change.
